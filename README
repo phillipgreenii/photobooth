@@ -1,0 +1,11 @@
+Purpose:
+	This application is a simple photobooth that I plan to use at my wedding.
+
+Description:
+	When a button is pressed, multiple pictures will be taken with pauses inbetween.  The pictures will then be printed out.
+
+
+Reference:
+	The code was originially based on the code examples found at the following websites:
+		http://pygstdocs.berlios.de/pygst-tutorial/webcam-viewer.html
+		http://www.hardill.me.uk/wordpress/?p=320
