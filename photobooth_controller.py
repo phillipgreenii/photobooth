@@ -25,7 +25,6 @@ class PhotoboothController:
 		self._viewFinder = viewFinder
 
 	def enableCamera(self):
-		self.camerabin.set_property("filename", "foo.jpg")
 		self.camerabin.set_state(gst.STATE_PLAYING)
 		None
 
@@ -38,6 +37,8 @@ class PhotoboothController:
 		session = photo_session.PhotoSession('./tmp',name) #TODO don't hardcode path
 		print "Taking a Picture"
 		self.camerabin.connect("image-done",lambda c, filename: session.addPhoto(filename))
+		picture_filename = '%012d' % math.floor(time.time()) + ".jpg"
+		self.camerabin.set_property("filename", picture_filename)
 		self.camerabin.emit("capture-start")
 		self.camerabin.connect("image-done",lambda c, filename: None) #FIXME error should occur
 
