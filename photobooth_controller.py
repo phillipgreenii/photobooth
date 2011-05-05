@@ -1,6 +1,9 @@
 import pygst
 pygst.require("0.10")
 import gst
+import time
+import math
+import photo_session
 
 class PhotoboothController:
 
@@ -11,8 +14,7 @@ class PhotoboothController:
 		src = gst.element_factory_make("v4l2src","src")
 		src.set_property("device","/dev/video0")
 		self.camerabin.set_property("video-source", src)
-		self.camerabin.connect("image-done",self._image_captured)
-
+		
 		bus = self.camerabin.get_bus()
 		bus.add_signal_watch()
 		bus.enable_sync_message_emission()
@@ -32,11 +34,12 @@ class PhotoboothController:
 		None
 
 	def takePictures(self):
+		name = '%012d' % math.floor(time.time())		
+		session = photo_session.PhotoSession('./tmp',name) #TODO don't hardcode path
 		print "Taking a Picture"
+		self.camerabin.connect("image-done",lambda c, filename: session.addPhoto(filename))
 		self.camerabin.emit("capture-start")
-
-	def _image_captured(self,c, filename):
-		print filename + " was taken"
+		self.camerabin.connect("image-done",lambda c, filename: None) #FIXME error should occur
 
 	def _on_message(self, bus, message):
 		t = message.type
