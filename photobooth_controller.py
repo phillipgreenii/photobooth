@@ -37,10 +37,13 @@ class PhotoboothController:
 		session = photo_session.PhotoSession('./tmp',name) #TODO don't hardcode path
 		print "Taking a Picture"
 		self.camerabin.connect("image-done",lambda c, filename: session.addPhoto(filename))
-		picture_filename = '%012d' % math.floor(time.time()) + ".jpg"
-		self.camerabin.set_property("filename", picture_filename)
-		self.camerabin.emit("capture-start")
-		self.camerabin.connect("image-done",lambda c, filename: None) #FIXME error should occur
+		for i in range(4): #TODO don't hardcode number of pictures
+			time.sleep(2) #TODO don't hardcode delay
+			print "Taking a Picture %02d" % i
+			picture_filename = '%012d' % math.floor(time.time()) + ".jpg"
+			self.camerabin.set_property("filename", picture_filename)
+			self.camerabin.emit("capture-start")
+		        #TODO check to see if the picture is done
 
 	def _on_message(self, bus, message):
 		t = message.type
