@@ -18,6 +18,7 @@ class PhotoboothGUI:
 		hbox.set_border_width(10)
 		hbox.pack_start(gtk.Label())
 		self.takePictureButton = gtk.Button("Take Picture")
+		self.takePictureButton.set_sensitive(False)
 		self.takePictureButton.connect("clicked",self.take_picture)
 		hbox.pack_start(self.takePictureButton, False)
 		self.button = gtk.Button("Start")
@@ -35,15 +36,18 @@ class PhotoboothGUI:
 
 	def start_stop(self, w):
 		if self.button.get_label() == "Start":
-			self.button.set_label("Stop")
+			self.button.set_label("Stop")			
 			self.controller.enableCamera()
+			self.takePictureButton.set_sensitive(True)
 		else:
+			self.takePictureButton.set_sensitive(False)
 			self.controller.disableCamera()
 			self.button.set_label("Start")
 
 	def take_picture(self,w):
-		print "Taking a Picture"
+		self.takePictureButton.set_sensitive(False)
 		self.controller.takePictures()
+		self.takePictureButton.set_sensitive(True)
 
 	def exit(self, widget, data=None):
 		self.controller.disableCamera()
