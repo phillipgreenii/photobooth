@@ -7,6 +7,7 @@ pygst.require("0.10")
 import gst
 
 #taken from http://pygstdocs.berlios.de/pygst-tutorial/webcam-viewer.html
+#screen capture from http://www.hardill.me.uk/wordpress/?p=320
 class GTK_Main:
 
 	def __init__(self):
@@ -35,9 +36,14 @@ class GTK_Main:
 		window.show_all()
 
 		# Set up the gstreamer pipeline
-		self.player = gst.parse_launch ("v4l2src ! autovideosink")
+		self.camerabin = gst.element_factory_make("camerabin", "cam")
+		self.sink = gst.element_factory_make("xvimagesink", "sink")
+		src = gst.element_factory_make("v4l2src","src")
+		src.set_property("device","/dev/video0")
+		self.camerabin.set_property("video-source", src)
+		self.camerabin.connect("image-done",self.image_captured)
 
-		bus = self.player.get_bus()
+		bus = self.camerabin.get_bus()
 		bus.add_signal_watch()
 		bus.enable_sync_message_emission()
 		bus.connect("message", self.on_message)
@@ -46,13 +52,18 @@ class GTK_Main:
 	def start_stop(self, w):
 		if self.button.get_label() == "Start":
 			self.button.set_label("Stop")
-			self.player.set_state(gst.STATE_PLAYING)
+			self.camerabin.set_property("filename", "foo.jpg")
+			self.camerabin.set_state(gst.STATE_PLAYING)
 		else:
-			self.player.set_state(gst.STATE_NULL)
+			self.camerabin.set_state(gst.STATE_NULL)
 			self.button.set_label("Start")
 
 	def take_picture(self,w):
 		print "Taking a Picture"
+		self.camerabin.emit("capture-start")
+
+	def image_captured(self,c, filename):
+		print filename + " was taken"
 
 	def exit(self, widget, data=None):
 		gtk.main_quit()
@@ -60,12 +71,12 @@ class GTK_Main:
 	def on_message(self, bus, message):
 		t = message.type
 		if t == gst.MESSAGE_EOS:
-			self.player.set_state(gst.STATE_NULL)
+			self.camerabin.set_state(gst.STATE_NULL)
 			self.button.set_label("Start")
 		elif t == gst.MESSAGE_ERROR:
 			err, debug = message.parse_error()
 			print "Error: %s" % err, debug
-			self.player.set_state(gst.STATE_NULL)
+			self.camerabin.set_state(gst.STATE_NULL)
 			self.button.set_label("Start")
 
 	def on_sync_message(self, bus, message):
