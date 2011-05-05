@@ -22,6 +22,9 @@ class GTK_Main:
 		vbox.pack_start(hbox, False)
 		hbox.set_border_width(10)
 		hbox.pack_start(gtk.Label())
+		self.takePictureButton = gtk.Button("Take Picture")
+		self.takePictureButton.connect("clicked",self.take_picture)
+		hbox.pack_start(self.takePictureButton, False)
 		self.button = gtk.Button("Start")
 		self.button.connect("clicked", self.start_stop)
 		hbox.pack_start(self.button, False)
@@ -47,6 +50,9 @@ class GTK_Main:
 		else:
 			self.player.set_state(gst.STATE_NULL)
 			self.button.set_label("Start")
+
+	def take_picture(self,w):
+		print "Taking a Picture"
 
 	def exit(self, widget, data=None):
 		gtk.main_quit()
