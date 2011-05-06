@@ -4,6 +4,7 @@ import gst
 import time
 import math
 import photo_session
+import photo_taker
 
 class PhotoboothController:
 
@@ -32,18 +33,12 @@ class PhotoboothController:
 		self.camerabin.set_state(gst.STATE_NULL)
 		None
 
-	def takePictures(self):
+	def takePictures(self,all_pictures_taken_callback = lambda : None):
 		name = '%012d' % math.floor(time.time())		
 		session = photo_session.PhotoSession('./tmp',name) #TODO don't hardcode path
 		print "Taking a Picture"
-		self.camerabin.connect("image-done",lambda c, filename: session.addPhoto(filename))
-		for i in range(4): #TODO don't hardcode number of pictures
-			time.sleep(2) #TODO don't hardcode delay
-			print "Taking a Picture %02d" % i
-			picture_filename = '%012d' % math.floor(time.time()) + ".jpg"
-			self.camerabin.set_property("filename", picture_filename)
-			self.camerabin.emit("capture-start")
-		        #TODO check to see if the picture is done
+		photoTaker = photo_taker.PhotoTaker(self.camerabin, session, 4, all_pictures_taken_callback)
+		photoTaker.start()
 
 	def _on_message(self, bus, message):
 		t = message.type

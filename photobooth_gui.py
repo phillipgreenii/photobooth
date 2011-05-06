@@ -46,8 +46,7 @@ class PhotoboothGUI:
 
 	def take_picture(self,w):
 		self.takePictureButton.set_sensitive(False)
-		self.controller.takePictures()
-		self.takePictureButton.set_sensitive(True)
+		self.controller.takePictures(lambda : self.takePictureButton.set_sensitive(True))		
 
 	def exit(self, widget, data=None):
 		self.controller.disableCamera()
