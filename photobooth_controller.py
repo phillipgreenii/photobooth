@@ -15,6 +15,8 @@ class PhotoboothController:
 		src = gst.element_factory_make("v4l2src","src")
 		src.set_property("device","/dev/video0")
 		self.camerabin.set_property("video-source", src)
+
+		self.cameraEnabled = False
 		
 		bus = self.camerabin.get_bus()
 		bus.add_signal_watch()
@@ -25,13 +27,16 @@ class PhotoboothController:
 	def setViewFinder(self,viewFinder):
 		self._viewFinder = viewFinder
 
+	def isCameraEnabled(self):
+		return self.cameraEnabled #TODO check status of camerabin instead
+
 	def enableCamera(self):
 		self.camerabin.set_state(gst.STATE_PLAYING)
-		None
+		self.cameraEnabled = True
 
 	def disableCamera(self):
 		self.camerabin.set_state(gst.STATE_NULL)
-		None
+		self.cameraEnabled = False		
 
 	def takePictures(self,all_pictures_taken_callback = lambda : None):
 		name = '%012d' % math.floor(time.time())		

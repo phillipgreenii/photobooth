@@ -1,16 +1,43 @@
 import pygtk, gtk, gobject
+pygtk.require('2.0')
 
 class PhotoboothGUI:
 
 	def __init__(self, controller):
 		self.controller = controller
 		
+		# create window
 		window = gtk.Window(gtk.WINDOW_TOPLEVEL)
 		window.set_title("Webcam-Viewer")
 		window.set_default_size(500, 400)
 		window.connect("destroy", gtk.main_quit, "WM destroy")
+
+		# vertical container to hold everything
 		vbox = gtk.VBox()
 		window.add(vbox)
+	
+		# create tools menu
+		tools_menu_item = gtk.MenuItem("Tools")
+
+
+		tools_menu = gtk.Menu()
+		tools_menu_item_camera_toggle = gtk.MenuItem('Toggle Camera')
+		tools_menu_item_camera_toggle.connect("activate", self.start_stop, 'toggle-camera')
+		tools_menu_item_camera_toggle.show()
+		tools_menu.append(tools_menu_item_camera_toggle)
+
+		tools_menu_item.set_submenu(tools_menu)
+		tools_menu_item.show()
+		
+		menu_bar = gtk.MenuBar()
+		menu_bar.append(tools_menu_item)
+		menu_bar.show()
+
+		#FIXME needs packed better
+		#FIXME doesn't always render
+		vbox.pack_start(menu_bar)#, False, False,2 ) 
+
+		
 		self.movie_window = gtk.DrawingArea()
 		vbox.add(self.movie_window)
 		hbox = gtk.HBox()
@@ -21,9 +48,6 @@ class PhotoboothGUI:
 		self.takePictureButton.set_sensitive(False)
 		self.takePictureButton.connect("clicked",self.take_picture)
 		hbox.pack_start(self.takePictureButton, False)
-		self.button = gtk.Button("Start")
-		self.button.connect("clicked", self.start_stop)
-		hbox.pack_start(self.button, False)
 		self.button2 = gtk.Button("Quit")
 		self.button2.connect("clicked", self.exit)
 		hbox.pack_start(self.button2, False)
@@ -34,15 +58,14 @@ class PhotoboothGUI:
 		self.controller.setViewFinder(self.movie_window)
 
 
-	def start_stop(self, w):
-		if self.button.get_label() == "Start":
-			self.button.set_label("Stop")			
-			self.controller.enableCamera()
-			self.takePictureButton.set_sensitive(True)
-		else:
-			self.takePictureButton.set_sensitive(False)
-			self.controller.disableCamera()
-			self.button.set_label("Start")
+	def start_stop(self, w, string):
+		if string == 'toggle-camera':
+			if self.controller.isCameraEnabled():
+				self.takePictureButton.set_sensitive(False)
+				self.controller.disableCamera()
+			else:
+				self.controller.enableCamera()
+				self.takePictureButton.set_sensitive(True)
 
 	def take_picture(self,w):
 		self.takePictureButton.set_sensitive(False)
