@@ -57,6 +57,15 @@ class PhotoboothGUI:
 		hbox.pack_start(self.takePictureButton, False)
 
 		hbox.add(gtk.Label())
+
+		inprogressBox = gtk.HBox()
+		vbox.pack_start(inprogressBox,False)
+		inprogressBox.set_border_width(10)
+		inprogressBox.pack_start(gtk.Label())
+		self.countDownLabel = gtk.Label()
+		inprogressBox.add(self.countDownLabel)		
+		inprogressBox.pack_start(gtk.Label())
+
 		window.show_all()
 
 		# link to controller
@@ -76,8 +85,22 @@ class PhotoboothGUI:
 
 	def take_picture(self,w):
 		self.logger.info('take pictures')
-		self.takePictureButton.set_sensitive(False)
-		self.controller.takePictures(lambda : self.takePictureButton.set_sensitive(True))		
+		self.controller.takePictures(self._picture_event_handler)		
+
+	def _picture_event_handler(self,event):
+		self.logger.debug('handling %s' % event)
+		#TODO don't hard code event types or fields
+		if event['type'] == 'START':
+			self.takePictureButton.set_sensitive(False)
+		elif event['type'] == 'TAKE_PICTURE':
+			self.countDownLabel.set_text('Taking Picture %d/%d' % (event['current_picture'], event['total_pictures']))
+		elif event['type'] == 'TOOK_PICTURE':
+			self.countDownLabel.set_text('Took Picture %d/%d' % (event['current_picture'], event['total_pictures']))
+		elif event['type'] == 'COUNT_DOWN_UPDATE':
+			self.countDownLabel.set_text(event['time_until_picture'])
+		elif event['type'] == 'DONE':
+			self.countDownLabel.set_text('')
+			self.takePictureButton.set_sensitive(True)		
 
 	def exit(self, widget, data=None):
 		self.logger.debug('exiting gui')

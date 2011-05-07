@@ -45,12 +45,12 @@ class PhotoboothController:
 		self.camerabin.set_state(gst.STATE_NULL)
 		self.cameraEnabled = False		
 
-	def takePictures(self,all_pictures_taken_callback = lambda : None):
+	def takePictures(self,event_callback = lambda e : None ):
 		name = '%012d' % math.floor(time.time())
 		self.logger.debug('creating session')
 		session = photo_session.PhotoSession('./tmp',name) #TODO don't hardcode path
 		self.logger.info('Taking pictures for %s' % session)
-		photoTaker = photo_taker.PhotoTaker(self.camerabin, session, 4, all_pictures_taken_callback)
+		photoTaker = photo_taker.PhotoTaker(self.camerabin, session, 4, event_callback)
 		photoTaker.start()
 
 	def _on_message(self, bus, message):
