@@ -31,7 +31,7 @@ class PhotoTaker:
         self.camera.set_property("filename", picture_filename)
         self.event_callback({'type':'TAKE_PICTURE', 'current_picture':self.counter, 'total_pictures':self.numberOfPictures})
         self.camera.emit("capture-start")
-        
+
 
     def _handlePicture(self, c, filename):
         self.logger.debug('handling picture: %s' % filename)

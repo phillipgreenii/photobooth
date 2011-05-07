@@ -11,7 +11,7 @@ class PhotoboothController:
 
 	def __init__(self, configuration):
 		self.logger = logging.getLogger('photobooth.controller')
-		
+
 		# Set up the gstreamer pipeline
 		self.logger.debug('configuring gstreamer pipeline')
 		self.camerabin = gst.element_factory_make("camerabin", "cam")
@@ -21,7 +21,7 @@ class PhotoboothController:
 		self.camerabin.set_property("video-source", src)
 
 		self.cameraEnabled = False
-		
+
 		bus = self.camerabin.get_bus()
 		bus.add_signal_watch()
 		bus.enable_sync_message_emission()
@@ -41,9 +41,9 @@ class PhotoboothController:
 		self.cameraEnabled = True
 
 	def disableCamera(self):
-		self.logger.info('disabling camera')		
+		self.logger.info('disabling camera')
 		self.camerabin.set_state(gst.STATE_NULL)
-		self.cameraEnabled = False		
+		self.cameraEnabled = False
 
 	def takePictures(self,event_callback = lambda e : None ):
 		name = '%012d' % math.floor(time.time())
@@ -69,7 +69,7 @@ class PhotoboothController:
 		message_name = message.structure.get_name()
 		if message_name == "prepare-xwindow-id":
 			if self._viewFinder == None:
-				self.logger.error('no viewFinder set')				
+				self.logger.error('no viewFinder set')
 				raise Exception("no viewFinder set")
 			# Assign the viewport
 			self.logger.info('assigning viewport')

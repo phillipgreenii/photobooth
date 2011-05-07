@@ -6,9 +6,9 @@ class PhotoboothGUI:
 
 	def __init__(self, controller):
 		self.logger = logging.getLogger('photobooth.gui')
-		
+
 		self.controller = controller
-		
+
 		# create window
 		self.logger.debug('creating window')
 		window = gtk.Window(gtk.WINDOW_TOPLEVEL)
@@ -19,7 +19,7 @@ class PhotoboothGUI:
 		# vertical container to hold everything
 		vbox = gtk.VBox()
 		window.add(vbox)
-	
+
 		# create tools menu
 		self.logger.debug('creating menu')
 		tools_menu_item = gtk.MenuItem("_Tools")
@@ -32,13 +32,13 @@ class PhotoboothGUI:
 
 		tools_menu_item.set_submenu(tools_menu)
 		tools_menu_item.show()
-		
+
 		menu_bar = gtk.MenuBar()
 		menu_bar.append(tools_menu_item)
 		menu_bar.show()
 
 		#FIXME doesn't always render
-		vbox.pack_start(menu_bar, False, False,2 ) 
+		vbox.pack_start(menu_bar, False, False,2 )
 
 		self.logger.debug('creating drawing area')
 		self.movie_window = gtk.DrawingArea()
@@ -63,7 +63,7 @@ class PhotoboothGUI:
 		inprogressBox.set_border_width(10)
 		inprogressBox.pack_start(gtk.Label())
 		self.countDownLabel = gtk.Label()
-		inprogressBox.add(self.countDownLabel)		
+		inprogressBox.add(self.countDownLabel)
 		inprogressBox.pack_start(gtk.Label())
 
 		window.show_all()
@@ -85,7 +85,7 @@ class PhotoboothGUI:
 
 	def take_picture(self,w):
 		self.logger.info('take pictures')
-		self.controller.takePictures(self._picture_event_handler)		
+		self.controller.takePictures(self._picture_event_handler)
 
 	def _picture_event_handler(self,event):
 		self.logger.debug('handling %s' % event)
@@ -100,7 +100,7 @@ class PhotoboothGUI:
 			self.countDownLabel.set_text(event['time_until_picture'])
 		elif event['type'] == 'DONE':
 			self.countDownLabel.set_text('')
-			self.takePictureButton.set_sensitive(True)		
+			self.takePictureButton.set_sensitive(True)
 
 	def exit(self, widget, data=None):
 		self.logger.debug('exiting gui')
