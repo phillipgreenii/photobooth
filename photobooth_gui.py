@@ -10,7 +10,7 @@ class PhotoboothGUI:
 		window = gtk.Window(gtk.WINDOW_TOPLEVEL)
 		window.set_title("Webcam-Viewer")
 		window.set_default_size(500, 400)
-		window.connect("destroy", gtk.main_quit, "WM destroy")
+		window.connect("destroy", self.exit, "WM destroy")
 
 		# vertical container to hold everything
 		vbox = gtk.VBox()
@@ -36,7 +36,6 @@ class PhotoboothGUI:
 		#FIXME needs packed better
 		#FIXME doesn't always render
 		vbox.pack_start(menu_bar)#, False, False,2 ) 
-
 		
 		self.movie_window = gtk.DrawingArea()
 		vbox.add(self.movie_window)
@@ -48,9 +47,6 @@ class PhotoboothGUI:
 		self.takePictureButton.set_sensitive(False)
 		self.takePictureButton.connect("clicked",self.take_picture)
 		hbox.pack_start(self.takePictureButton, False)
-		self.button2 = gtk.Button("Quit")
-		self.button2.connect("clicked", self.exit)
-		hbox.pack_start(self.button2, False)
 		hbox.add(gtk.Label())
 		window.show_all()
 
