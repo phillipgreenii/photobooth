@@ -97,7 +97,7 @@ class PhotoboothGUI:
 		elif event['type'] == 'TOOK_PICTURE':
 			self.countDownLabel.set_text('Took Picture %d/%d' % (event['current_picture'], event['total_pictures']))
 		elif event['type'] == 'COUNT_DOWN_UPDATE':
-			self.countDownLabel.set_text(event['time_until_picture'])
+			self.countDownLabel.set_text("%d ..." % event['time_until_picture'])
 		elif event['type'] == 'DONE':
 			self.countDownLabel.set_text('')
 			self.takePictureButton.set_sensitive(True)

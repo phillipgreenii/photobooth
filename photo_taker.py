@@ -22,6 +22,14 @@ class PhotoTaker:
         self.logger.debug('starting to take pictures')
         self.camera.connect("image-done",self._handlePicture)
         self.event_callback({'type':'START'})
+        self._delayUntilNextPicture()
+
+    def _delayUntilNextPicture(self):
+        self.logger.debug('delay before next picture')
+
+        for timeLeft in xrange(3,0,-1): #TODO don't hardcode delay
+            self.event_callback({'type':'COUNT_DOWN_UPDATE', 'time_until_picture': timeLeft})
+            time.sleep(1) 
         self._takeNextPicture()
 
     def _takeNextPicture(self):
@@ -39,9 +47,7 @@ class PhotoTaker:
         self.event_callback({'type':'TOOK_PICTURE', 'current_picture':self.counter, 'total_pictures':self.numberOfPictures})
 
         if self.counter < self.numberOfPictures:
-            self.logger.debug('delay before next picture')
-            time.sleep(2) #TODO don't hardcode delay
-            self._takeNextPicture()
+            self._delayUntilNextPicture()
         else:
             self.logger.debug('finished taking pictures')
             self.done = True
