@@ -10,6 +10,8 @@ class PhotoSession:
         os.mkdir(self._storage_directory)
         self._name = name
         self._photo_counter = 0
+        if self.logger.isEnabledFor(logging.DEBUG):
+            self.logger.debug(repr(self))
 
     def addPhoto(self,photo):
         self.logger.debug('adding photo %s' % photo)

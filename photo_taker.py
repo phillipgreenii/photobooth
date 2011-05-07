@@ -12,6 +12,8 @@ class PhotoTaker:
         self.started = False
         self.done = False
         self.finished_callback = finished_callback
+        if self.logger.isEnabledFor(logging.DEBUG):
+            self.logger.debug(repr(self))
 
     def start(self):
         if self.started:
@@ -43,3 +45,10 @@ class PhotoTaker:
 
     def isDone(self):
         return self.done
+
+    def __repr__(self):
+        return "%s(camera=%s,session=%s,numberOfPictures=%d,counter=%d,started=%s,done=%s,finished_callback=%s)" % \
+               (self.__class__,self.camera, self.session, self.numberOfPictures, self.counter, self.started, self.done, self.finished_callback)
+
+    def __str__(self):
+        return "%s(%d/%d of %s)" % (self.__class__,self.counter, self.numberOfPictures, self.session)
