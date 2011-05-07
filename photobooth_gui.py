@@ -12,9 +12,9 @@ class PhotoboothGUI:
 		# create window
 		self.logger.debug('creating window')
 		window = gtk.Window(gtk.WINDOW_TOPLEVEL)
-		window.set_title("Webcam-Viewer")
+		window.set_title("Photobooth")
 		window.set_default_size(500, 400)
-		window.connect("destroy", self.exit, "WM destroy")
+		window.connect("destroy", self.exit, "Photobooth destroy")
 
 		# vertical container to hold everything
 		vbox = gtk.VBox()
@@ -22,10 +22,10 @@ class PhotoboothGUI:
 	
 		# create tools menu
 		self.logger.debug('creating menu')
-		tools_menu_item = gtk.MenuItem("Tools")
+		tools_menu_item = gtk.MenuItem("_Tools")
 
 		tools_menu = gtk.Menu()
-		tools_menu_item_camera_toggle = gtk.MenuItem('Toggle Camera')
+		tools_menu_item_camera_toggle = gtk.MenuItem('_Toggle Camera')
 		tools_menu_item_camera_toggle.connect("activate", self.start_stop, 'toggle-camera')
 		tools_menu_item_camera_toggle.show()
 		tools_menu.append(tools_menu_item_camera_toggle)
