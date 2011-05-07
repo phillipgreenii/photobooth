@@ -19,7 +19,6 @@ class PhotoboothGUI:
 		# create tools menu
 		tools_menu_item = gtk.MenuItem("Tools")
 
-
 		tools_menu = gtk.Menu()
 		tools_menu_item_camera_toggle = gtk.MenuItem('Toggle Camera')
 		tools_menu_item_camera_toggle.connect("activate", self.start_stop, 'toggle-camera')
@@ -35,7 +34,7 @@ class PhotoboothGUI:
 
 		#FIXME needs packed better
 		#FIXME doesn't always render
-		vbox.pack_start(menu_bar)#, False, False,2 ) 
+		vbox.pack_start(menu_bar, False, False,2 ) 
 		
 		self.movie_window = gtk.DrawingArea()
 		vbox.add(self.movie_window)
