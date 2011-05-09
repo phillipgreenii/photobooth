@@ -48,9 +48,9 @@ class PhotoboothController:
 	def takePictures(self,event_callback = lambda e : None ):
 		name = '%012d' % math.floor(time.time())
 		self.logger.debug('creating session')
-		session = photo_session.PhotoSession('./tmp',name) #TODO don't hardcode path
+		session = photo_session.PhotoSession('./tmp',name, 4) #TODO don't hardcode path #TODO don't hardcode number of pictures
 		self.logger.info('Taking pictures for %s' % session)
-		photoTaker = photo_taker.PhotoTaker(self.camerabin, session, 4, event_callback)
+		photoTaker = photo_taker.PhotoTaker(self.camerabin, session, 3, event_callback) #TODO don't harcode delay between pictures
 		photoTaker.start()
 
 	def _on_message(self, bus, message):

@@ -101,6 +101,11 @@ class PhotoboothGUI:
 		elif event['type'] == 'DONE':
 			self.countDownLabel.set_text('')
 			self.takePictureButton.set_sensitive(True)
+		self.flushUpdates()
+
+	def flushUpdates(self):
+		while gtk.events_pending():
+			gtk.main_iteration()
 
 	def exit(self, widget, data=None):
 		self.logger.debug('exiting gui')
