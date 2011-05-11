@@ -44,7 +44,7 @@ class PhotoTaker:
         self.logger.info('taking picture: %02d' % counter)        
         picture_filename = '%012d' % math.floor(time.time()) + ".jpg"
         self.camera.set_property("filename", picture_filename)
-        self.event_callback({'type':'TAKE_PICTURE', 'current_picture':counter, 'total_pictures':numberOfPictures})
+        self.event_callback({'type':'TAKE_PICTURE', 'current_picture':counter+1, 'total_pictures':numberOfPictures})
         self.camera.set_property('block-after-capture', True)
         self.camera.emit("capture-start")
         self.logger.debug('pausing')
