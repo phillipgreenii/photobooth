@@ -5,6 +5,7 @@ import time
 import math
 import photo_session
 import photo_taker
+import photo_printer
 import logging
 
 class PhotoboothController:
@@ -13,6 +14,7 @@ class PhotoboothController:
 		self.logger = logging.getLogger('photobooth.controller')
 
 		self._apply_configuration(configuration)
+		self.photoPrinter = photo_printer.PhotoPrinter()
 
 		# Set up the gstreamer pipeline
 		self.logger.debug('configuring gstreamer pipeline')
@@ -66,8 +68,10 @@ class PhotoboothController:
 		self.logger.debug('creating session')
 		session = photo_session.PhotoSession(self._session_root_path,name, self._number_of_photos)
 		self.logger.info('Taking pictures for %s' % session)
-		photoTaker = photo_taker.PhotoTaker(self.camerabin, session, self._time_delay, event_callback)
+		photoTaker = photo_taker.PhotoTaker(self.camerabin, session, self._time_delay, event_callback)#TODO do I need a new photoTake each time?
 		photoTaker.start()
+		self.logger.info('Printing pictures')
+		self.photoPrinter.printSession(session,event_callback)
 
 	def _on_message(self, bus, message):
 		t = message.type

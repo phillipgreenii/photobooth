@@ -101,6 +101,8 @@ class PhotoboothGUI:
 		elif event['type'] == 'DONE':
 			self.countDownLabel.set_text('')
 			self.takePictureButton.set_sensitive(True)
+		elif event['type'] == 'PRINTED':
+			self.countDownLabel.set_text('Printed Pictures')
 		self.flushUpdates()
 
 	def flushUpdates(self):
