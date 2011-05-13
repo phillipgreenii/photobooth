@@ -4,6 +4,9 @@ Purpose:
 Description:
 	When a button is pressed, multiple pictures will be taken with pauses inbetween.  The pictures will then be printed out.
 
+Dependencies:
+	ReportLab
+		http://www.reportlab.com/ftp/
 
 Reference:
 	The code was originially based on the code examples found at the following websites:

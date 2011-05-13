@@ -12,7 +12,13 @@ class PhotoSession:
         self._photo_counter = 0
         self._photos_to_take = photosToTake
         if self.logger.isEnabledFor(logging.DEBUG):
-            self.logger.debug(repr(self))
+            self.logger.debug(repr(self))    
+
+    def get_name(self):
+        return self._name
+
+    def get_storage_directory(self):
+        return self._storage_directory;
 
     def total_photos_to_take(self):
         return self._photos_to_take
