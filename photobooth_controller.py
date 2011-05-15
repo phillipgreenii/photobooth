@@ -6,17 +6,16 @@ import math
 import photo_session
 import photo_taker
 import photo_printer
-import printer_manager
 import logging
 
 class PhotoboothController:
 
-	def __init__(self, configuration):
+	def __init__(self, configuration, printer_manager):
 		self.logger = logging.getLogger('photobooth.controller')
 
 		self._apply_configuration(configuration)
-		self.printerManager = printer_manager.PrinterManager()
-		self.photoPrinter = photo_printer.PhotoPrinter(self.printerManager)
+		self.printerManager = printer_manager
+		self.photoPrinter = photo_printer.PhotoPrinter(self.printerManager, self._printer_name)
 
 		# Set up the gstreamer pipeline
 		self.logger.debug('configuring gstreamer pipeline')
@@ -46,6 +45,7 @@ class PhotoboothController:
 		self._session_root_path = check_for_parameter('output-directory')
 		self._number_of_photos = check_for_parameter('number-of-photos')
 		self._time_delay = check_for_parameter('time-delay')
+		self._printer_name = check_for_parameter('printer')
 
 
 	def setViewFinder(self,viewFinder):
