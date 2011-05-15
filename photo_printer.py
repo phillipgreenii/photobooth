@@ -6,9 +6,9 @@ from reportlab.pdfgen.canvas import Canvas
 
 
 class PhotoPrinter:
-    def __init__(self):
+    def __init__(self, printer_manager):
         self.logger = logging.getLogger('photo.printer')
-        self._printer = ''
+        self._printer_manager = printer_manager
         self._pagesize = self._create_pagesize(2.2, 8.5) #TODO don't hard code page size
 
     def _create_pagesize(self,width,height):
@@ -17,9 +17,9 @@ class PhotoPrinter:
 
     def printSession(self,session,event_callback=lambda e : None):
         event_callback({'type':'GENERATING_PDF'})
-        self._generatePdf(session)        
+        file_name = self._generatePdf(session)        
         event_callback({'type':'PRINTING'})
-        self._printPdf(session)
+        self._printPdf(file_name)
         event_callback({'type':'PRINTED'})
 
     def _generatePdf(self,session):
@@ -40,10 +40,10 @@ class PhotoPrinter:
         
         pdf.showPage()
         pdf.save()
+        return file_name
 
     def _printPdf(self,pdfLocation):
-        #TODO implement _printPdf
-        pass
+        self._printer_manager.printFile(pdfLocation)
 
     def __repr__(self):
         return "%s(printer=%s)" % \

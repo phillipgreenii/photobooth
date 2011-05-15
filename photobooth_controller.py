@@ -6,6 +6,7 @@ import math
 import photo_session
 import photo_taker
 import photo_printer
+import printer_manager
 import logging
 
 class PhotoboothController:
@@ -14,7 +15,8 @@ class PhotoboothController:
 		self.logger = logging.getLogger('photobooth.controller')
 
 		self._apply_configuration(configuration)
-		self.photoPrinter = photo_printer.PhotoPrinter()
+		self.printerManager = printer_manager.PrinterManager()
+		self.photoPrinter = photo_printer.PhotoPrinter(self.printerManager)
 
 		# Set up the gstreamer pipeline
 		self.logger.debug('configuring gstreamer pipeline')
