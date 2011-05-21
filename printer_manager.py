@@ -23,6 +23,7 @@ class PrinterManager:
         self._default_printer_name = self._retrieve_default_printer_name()
 
     def _retrieve_printer_names(self):
+        self.logger.debug('retrieving printer names')
         p = subprocess.Popen(('lpstat','-a'),stdout=subprocess.PIPE)
         r = re.compile('(.*) accepting requests')
         printer_names = []
@@ -33,6 +34,7 @@ class PrinterManager:
         return printer_names
 
     def _retrieve_default_printer_name(self):
+        self.logger.debug('retrieving default printer name')
         p = subprocess.Popen(('lpstat','-d'),stdout=subprocess.PIPE)
         r = re.compile('system default destination: (.*)$')
         line = p.stdout.read()
