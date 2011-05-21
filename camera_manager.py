@@ -1,12 +1,13 @@
 import pygst
 pygst.require("0.10")
 import gst
+import time
 import logging
 
 class CameraManager:
 
     def __init__(self, configuration):
-        self.logger = logging.getLogger('camera.manager')
+        self.logger = logging.getLogger('camerabin.manager')
 
         # Set up the gstreamer pipeline
         self.logger.debug('configuring gstreamer pipeline')
@@ -17,6 +18,7 @@ class CameraManager:
         self.camerabin.set_property("video-source", src)
 
         self.cameraEnabled = False
+        self.current_handler_id = None
 
         bus = self.camerabin.get_bus()
         bus.add_signal_watch()
@@ -27,6 +29,26 @@ class CameraManager:
     def setViewFinder(self,viewFinder):
         self.logger.info('setting view finder')
         self._viewFinder = viewFinder
+
+    def set_photo_handler(self,handler):
+        self.logger.debug('setting photo handler (%s)' % str(handler))
+        if self.current_handler_id is not None:
+            self.logger.debug('cleaning up photo handler (%s)' % str(self.current_handler_id))
+            self.camerabin.disconnect(self.current_handler_id)
+        self.current_handler_id = self.camerabin.connect("image-done",lambda c,p: handler(p))
+
+    def take_photo(self, pause = 1):
+        photo_filename = '%012d.jpg' % time.time()  
+        self.logger.debug('taking photo')
+        if self.current_handler_id is None:
+            self.logger.warning('no photo handler set')
+        self.camerabin.set_property("filename", photo_filename)
+        self.camerabin.set_property('block-after-capture', True)
+        self.camerabin.emit("capture-start")
+        if pause > 0:
+            self.logger.debug('pausing')
+            time.sleep(pause)
+        self.camerabin.set_property('block-after-capture', False)
 
     def isCameraEnabled(self):
         return self.cameraEnabled #TODO check status of camerabin instead

@@ -12,7 +12,7 @@ class PhotoboothController:
         self.printerManager = printer_manager
         self.cameraManager = camera_manager
         self.photoPrinter = photo_printer.PhotoPrinter(self.printerManager, self._printer_name)
-        self.photoTaker = photo_taker.PhotoTaker(self.cameraManager.camerabin)
+        self.photoTaker = photo_taker.PhotoTaker(self.cameraManager)
 
     def _apply_configuration(self,configuration):
         def check_for_parameter(param):

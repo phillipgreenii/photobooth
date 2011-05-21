@@ -3,9 +3,9 @@ import time
 import logging
 
 class PhotoTaker:
-    def __init__(self,camera):
+    def __init__(self,camera_manager):
         self.logger = logging.getLogger('photo.taker')
-        self.camera = camera
+        self.camera_manager = camera_manager
         self.started = False
 
     def takePictures(self, delay_between_photos, session, event_callback=lambda e : None):
@@ -22,40 +22,28 @@ class PhotoTaker:
             event_callback({'type':'COUNT_DOWN_UPDATE', 'time_until_picture': 0})
 
         def takeNextPicture(counter):
-            self.logger.info('taking picture: %02d' % counter)        
-            picture_filename = '%012d' % math.floor(time.time()) + ".jpg"
-            self.camera.set_property("filename", picture_filename)
+            self.logger.info('taking picture: %02d' % counter)                  
             event_callback({'type':'TAKE_PICTURE', 'current_picture':counter, 'total_pictures':numberOfPictures})
-            self.camera.set_property('block-after-capture', True)
-            self.camera.emit("capture-start")
-            self.logger.debug('pausing')
-            time.sleep(1)
-            self.camera.set_property('block-after-capture', False)
+            self.camera_manager.take_photo()
 
-        def handlePicture(c,filename):
-                self.logger.debug('handling picture: %s' % filename)
-                session.addPhoto(filename)
-                if session.is_complete():
-                        self._cleanup()
+        def handlePicture(filename):
+            self.logger.debug('handling picture: %s' % filename)
+            session.addPhoto(filename)
+            if session.is_complete():
+                pass
                 
         self.logger.debug('starting to take pictures')
         event_callback({'type':'START'})
-        self.handler_id = self.camera.connect("image-done",handlePicture)
+        self.camera_manager.set_photo_handler(handlePicture)
         try:
             for i in range(numberOfPictures): 
                 delayForNextPicture(delay_between_photos)
                 takeNextPicture(i+1)
             event_callback({'type':'DONE'})
             time.sleep(2)#FIXME there needs to be a pause so pictures aren't printed before they are finished    
-        except:
-            #TODO log error
+        except Exception as ex:
+            self.logger.error(ex)
             event_callback({'type':'ERROR'})
-            self._cleanup()
             raise
         finally:
             self.started = False
-
-    def _cleanup(self):
-        self.logger.debug('cleaning up (%s)' % str(self.handler_id))
-        if self.handler_id is not None:
-            self.camera.disconnect(self.handler_id)
