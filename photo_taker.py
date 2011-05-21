@@ -46,6 +46,7 @@ class PhotoTaker:
                 delayForNextPicture(delay_between_photos)
                 takeNextPicture(i+1)
             event_callback({'type':'DONE'})
+            time.sleep(2)#FIXME there needs to be a pause so pictures aren't printed before they are finished    
         except:
             #TODO log error
             event_callback({'type':'ERROR'})
