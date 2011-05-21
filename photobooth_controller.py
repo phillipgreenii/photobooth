@@ -1,5 +1,3 @@
-import time
-import math
 import photo_session
 import photo_taker
 import photo_printer
@@ -42,13 +40,12 @@ class PhotoboothController:
 		self.cameraManager.disableCamera()
 
 	def takePictures(self,event_callback = lambda e : None ):
-		name = '%012d' % math.floor(time.time())
 		self.logger.debug('creating session')
-		session = photo_session.PhotoSession(self._session_root_path,name, self._number_of_photos)
+		session = photo_session.PhotoSession(self._session_root_path, self._number_of_photos)
 		self.logger.info('Taking pictures for %s' % session)
 		photoTaker = photo_taker.PhotoTaker(self.cameraManager.camerabin, session, self._time_delay, event_callback)#TODO do I need a new photoTake each time?
 		photoTaker.start()
-		self.logger.info('Printing pictures')
+		self.logger.info('Printing pictures')		
 		self.photoPrinter.printSession(session,event_callback)
 
 	
