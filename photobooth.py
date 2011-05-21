@@ -4,6 +4,7 @@ from optparse import OptionParser
 import logging
 import sys
 import printer_manager
+import camera_manager
 import photobooth_controller
 import photobooth_gui
 
@@ -74,9 +75,11 @@ def main(arguments):
 
 	logger.info('starting photobooth')
 
+        logger.debug('creating camera manager')
+        cm = camera_manager.CameraManager(configuration)
 
 	logger.debug('creating controller')
-	controller = photobooth_controller.PhotoboothController(configuration,pm)
+	controller = photobooth_controller.PhotoboothController(configuration,pm,cm)
 
 	logger.debug('creating gui')
 	gui = photobooth_gui.PhotoboothGUI(controller)
