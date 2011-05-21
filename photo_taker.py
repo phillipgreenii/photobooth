@@ -3,9 +3,11 @@ import time
 import logging
 
 class PhotoTaker:
-    def __init__(self,camera_manager):
+    def __init__(self,camera_manager, collage_generator, printer_manager):
         self.logger = logging.getLogger('photo.taker')
         self.camera_manager = camera_manager
+        self.collage_generator = collage_generator
+        self.printer_manager = printer_manager
         self.started = False
 
     def takePictures(self, delay_between_photos, session, event_callback=lambda e : None):
@@ -26,11 +28,22 @@ class PhotoTaker:
             event_callback({'type':'TAKE_PICTURE', 'current_picture':counter, 'total_pictures':numberOfPictures})
             self.camera_manager.take_photo()
 
+        def printPictures():
+            self.logger.info('generating collage')
+            event_callback({'type':'GENERATING_COLLAGE'})
+            collage = self.collage_generator.generateCollage(session)
+            session.setCollage(collage)       
+            event_callback({'type':'PRINTING'})
+            self.printer_manager.printFile(session.get_collage())#TODO get printer from configuration
+            event_callback({'type':'PRINTED'})
+    
         def handlePicture(filename):
             self.logger.debug('handling picture: %s' % filename)
             session.addPhoto(filename)
             if session.is_complete():
-                pass
+                printPictures()                
+                self.started = False
+                event_callback({'type':'DONE'})
                 
         self.logger.debug('starting to take pictures')
         event_callback({'type':'START'})
@@ -39,11 +52,8 @@ class PhotoTaker:
             for i in range(numberOfPictures): 
                 delayForNextPicture(delay_between_photos)
                 takeNextPicture(i+1)
-            event_callback({'type':'DONE'})
-            time.sleep(2)#FIXME there needs to be a pause so pictures aren't printed before they are finished    
         except Exception as ex:
             self.logger.error(ex)
             event_callback({'type':'ERROR'})
-            raise
-        finally:
             self.started = False
+            raise

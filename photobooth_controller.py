@@ -1,6 +1,6 @@
 import photo_session
 import photo_taker
-import photo_printer
+import collage_generator
 import logging
 
 class PhotoboothController:
@@ -11,8 +11,8 @@ class PhotoboothController:
         self._apply_configuration(configuration)
         self.printerManager = printer_manager
         self.cameraManager = camera_manager
-        self.photoPrinter = photo_printer.PhotoPrinter(self.printerManager, self._printer_name)
-        self.photoTaker = photo_taker.PhotoTaker(self.cameraManager)
+        self.collage_generator = collage_generator.CollageGenerator()
+        self.photoTaker = photo_taker.PhotoTaker(self.cameraManager, self.collage_generator, self.printerManager)
 
     def _apply_configuration(self,configuration):
         def check_for_parameter(param):
@@ -44,7 +44,5 @@ class PhotoboothController:
         session = photo_session.PhotoSession(self._session_root_path, self._number_of_photos)
         self.logger.info('Taking pictures for %s' % session)        
         self.photoTaker.takePictures(self._time_delay, session, event_callback)
-        self.logger.info('Printing pictures')        
-        self.photoPrinter.printSession(session,event_callback)
 
     

@@ -86,6 +86,7 @@ class PhotoboothGUI:
     def take_picture(self,w):
         self.logger.info('take pictures')
         self.controller.takePictures(self._picture_event_handler)
+        self.logger.debug('finished taking pictures')
 
     def _picture_event_handler(self,event):
         self.logger.debug('handling %s' % event)
