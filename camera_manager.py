@@ -30,25 +30,24 @@ class CameraManager:
         self.logger.info('setting view finder')
         self._viewFinder = viewFinder
 
-    def set_photo_handler(self,handler):
-        self.logger.debug('setting photo handler (%s)' % str(handler))
-        if self.current_handler_id is not None:
-            self.logger.debug('cleaning up photo handler (%s)' % str(self.current_handler_id))
-            self.camerabin.disconnect(self.current_handler_id)
-        self.current_handler_id = self.camerabin.connect("image-done",lambda c,p: handler(p))
+    def _photo_handler(self,c,photo):
+        self.logger.debug('handling (%s)' % str(photo))
 
-    def take_photo(self, pause = 1):
+    def take_photo(self):
         photo_filename = '%012d.jpg' % time.time()  
         self.logger.debug('taking photo')
         if self.current_handler_id is None:
+            #TODO this should probably throw an exception
             self.logger.warning('no photo handler set')
+            return None
         self.camerabin.set_property("filename", photo_filename)
         self.camerabin.set_property('block-after-capture', True)
         self.camerabin.emit("capture-start")
-        if pause > 0:
-            self.logger.debug('pausing')
-            time.sleep(pause)
+        self.logger.debug('waiting for picture')
+        time.sleep(1)
+        self.logger.debug('waited for picture')
         self.camerabin.set_property('block-after-capture', False)
+        return photo_filename
 
     def isCameraEnabled(self):
         return self.cameraEnabled #TODO check status of camerabin instead
@@ -57,10 +56,14 @@ class CameraManager:
         self.logger.info('enabling camera')
         self.camerabin.set_state(gst.STATE_PLAYING)
         self.cameraEnabled = True
+        self.current_handler_id = self.camerabin.connect("image-done",self._photo_handler)
 
     def disableCamera(self):
         self.logger.info('disabling camera')
         self.camerabin.set_state(gst.STATE_NULL)
+        if self.current_handler_id is not None:
+            self.camerabin.disconnect(self.current_handler_id)
+            self.current_handler_id = None
         self.cameraEnabled = False
 
     def _on_message(self, bus, message):

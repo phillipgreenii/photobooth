@@ -26,7 +26,7 @@ class PhotoTaker:
         def takeNextPicture(counter):
             self.logger.info('taking picture: %02d' % counter)                  
             event_callback({'type':'TAKE_PICTURE', 'current_picture':counter, 'total_pictures':numberOfPictures})
-            self.camera_manager.take_photo()
+            session.addPhoto(self.camera_manager.take_photo())
 
         def printPictures():
             self.logger.info('generating collage')
@@ -37,21 +37,15 @@ class PhotoTaker:
             self.printer_manager.printFile(session.get_collage())#TODO get printer from configuration
             event_callback({'type':'PRINTED'})
     
-        def handlePicture(filename):
-            self.logger.debug('handling picture: %s' % filename)
-            session.addPhoto(filename)
-            if session.is_complete():
-                printPictures()                
-                self.started = False
-                event_callback({'type':'DONE'})
-                
         self.logger.debug('starting to take pictures')
         event_callback({'type':'START'})
-        self.camera_manager.set_photo_handler(handlePicture)
         try:
             for i in range(numberOfPictures): 
                 delayForNextPicture(delay_between_photos)
                 takeNextPicture(i+1)
+            printPictures()
+            self.started=False
+            event_callback({'type':'DONE'})
         except Exception as ex:
             self.logger.error(ex)
             event_callback({'type':'ERROR'})
