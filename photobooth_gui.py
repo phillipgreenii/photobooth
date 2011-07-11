@@ -1,6 +1,7 @@
 import pygtk, gtk, gobject
 pygtk.require('2.0')
 import logging
+import pango
 
 class PhotoboothGUI:
 
@@ -13,7 +14,7 @@ class PhotoboothGUI:
         self.logger.debug('creating window')
         window = gtk.Window(gtk.WINDOW_TOPLEVEL)
         window.set_title("Photobooth")
-        window.set_default_size(500, 400)
+        window.set_default_size(800, 600)
         window.connect("destroy", self.exit, "Photobooth destroy")
 
         # vertical container to hold everything
@@ -54,6 +55,9 @@ class PhotoboothGUI:
         self.takePictureButton = gtk.Button("Take Picture")
         self.takePictureButton.set_sensitive(False)
         self.takePictureButton.connect("clicked",self.take_picture)
+        buttonText = self.takePictureButton.get_children()[0]
+        buttonFont = pango.FontDescription("Georgia 32")
+        buttonText.modify_font(buttonFont)
         hbox.pack_start(self.takePictureButton, False)
 
         hbox.add(gtk.Label())
@@ -63,6 +67,8 @@ class PhotoboothGUI:
         inprogressBox.set_border_width(10)
         inprogressBox.pack_start(gtk.Label())
         self.countDownLabel = gtk.Label()
+        countDownLabelFont = pango.FontDescription("Georgia 28")
+        self.countDownLabel.modify_font(countDownLabelFont)
         inprogressBox.add(self.countDownLabel)
         inprogressBox.pack_start(gtk.Label())
 
