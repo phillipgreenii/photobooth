@@ -10,12 +10,17 @@ class PhotoboothGUI:
 
         self.controller = controller
 
+        self.in_progress = False
+
         # create window
         self.logger.debug('creating window')
         window = gtk.Window(gtk.WINDOW_TOPLEVEL)
         window.set_title("Photobooth")
         window.set_default_size(800, 600)
         window.connect("destroy", self.exit, "Photobooth destroy")
+
+        # add key listener
+        window.connect('key_press_event', self._on_key_press_event)
 
         # vertical container to hold everything
         vbox = gtk.VBox()
@@ -90,9 +95,17 @@ class PhotoboothGUI:
                 self.takePictureButton.set_sensitive(True)
 
     def take_picture(self,w):
-        self.logger.info('take pictures')
-        self.controller.takePictures(self._picture_event_handler)
-        self.logger.debug('finished taking pictures')
+        if not self.in_progress and self.controller.isCameraEnabled():
+            self.in_progress = True
+            self.logger.info('take pictures')
+            self.controller.takePictures(self._picture_event_handler)
+            self.logger.debug('finished taking pictures')
+
+    def _on_key_press_event(self,widget,event):
+         keyname = gtk.gdk.keyval_name(event.keyval)
+         self.logger.debug('keyname: %s' % keyname)
+         if keyname == 'percent' and event.state & gtk.gdk.CONTROL_MASK and event.state & gtk.gdk.MOD1_MASK and event.state & gtk.gdk.SHIFT_MASK:
+             self.take_picture(widget)
 
     def _picture_event_handler(self,event):
         self.logger.debug('handling %s' % event)
@@ -108,6 +121,9 @@ class PhotoboothGUI:
         elif event['type'] == 'DONE':
             self.countDownLabel.set_text('')
             self.takePictureButton.set_sensitive(True)
+            self.in_progress = False
+        elif event['type'] == 'ERROR':
+            self.in_progress = False
         elif event['type'] == 'PRINTED':
             self.countDownLabel.set_text('Printed Pictures')
         self.flushUpdates()
