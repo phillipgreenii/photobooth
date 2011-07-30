@@ -42,4 +42,4 @@ class PrinterManager:
         if m:
             return m.group(1)
         else:
-            raise exception("unparsible result: %s" % line)
+            raise Exception("unparsible result: %s" % line)
