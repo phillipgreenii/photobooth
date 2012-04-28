@@ -1,0 +1,19 @@
+printer manager
+configuration (needs default printer from manager)
+
+controller needs printer manager and configuration
+
+need camera manager
+
+photo_session needs addCollage 
+
+refactor photo taker and photo printer to no keep internal state, just use local varibles and have a single action method
+
+photo taker needs to accepts a clojure to do when photos are finished
+
+remove photo_printer, create collage_generator, and add it to photo_session, 
+change photo_taker to be an object that handles each photo and then prints them
+
+create master_factory
+
+
